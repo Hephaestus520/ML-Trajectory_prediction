@@ -1,6 +1,17 @@
+# Entorno virtual
 venv/
 __pycache__/
-data/
+
+# Datos crudos y procesados (no subir datasets grandes)
+data/raw/
+data/processed/
+*.parquet
+
+# Modelos entrenados (muy pesados)
 outputs/
 *.pt
+*.pth
+
+# Otros
 *.pk
+.DS_Store
