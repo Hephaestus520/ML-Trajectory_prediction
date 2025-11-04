@@ -23,3 +23,7 @@
 ├── requirements.txt
 ├── README.md
 └── .gitignore
+
+
+## Limpieza de datos y preparacion 
+ejecutar el script data_prep.py
