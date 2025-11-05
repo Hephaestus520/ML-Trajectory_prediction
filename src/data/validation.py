@@ -1,7 +1,7 @@
 import pandas as pd
 
 def process_dataset():
-    df = pd.read_parquet("data/processed/data_merged.parquet")
+    df = pd.read_parquet("data/processed/data_merged_labeled.parquet")
 
     print(df.columns)
     print(df.head())

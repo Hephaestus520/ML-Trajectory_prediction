@@ -133,6 +133,7 @@ def train_model(
     output_dir="outputs",
     use_class_weights=True
 ):
+    print("debug1")
     """
     Entrena el modelo LSTM.
     
@@ -154,12 +155,12 @@ def train_model(
     # Crear directorio de salida
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    
+    print("debug2")
     # Timestamp para identificar el entrenamiento
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     run_dir = output_dir / f"run_{timestamp}"
     run_dir.mkdir(exist_ok=True)
-    
+    print("debug3")
     print("=" * 70)
     print(f"🚀 ENTRENAMIENTO DEL MODELO LSTM")
     print("=" * 70)
@@ -239,7 +240,7 @@ def train_model(
     criterion = nn.CrossEntropyLoss(weight=class_weights)
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, mode='min', factor=0.5, patience=5, verbose=True
+        optimizer, mode='min', factor=0.5, patience=5
     )
     
     # Guardar configuración

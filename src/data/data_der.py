@@ -19,7 +19,7 @@ from pathlib import Path
 # 🔧 Parámetros globales
 # -------------------------------------------------------
 DATA_DIR = Path("data/processed")
-INPUT_FILE = DATA_DIR / "data_merged.parquet"
+INPUT_FILE = DATA_DIR / "data_merged_small.parquet"
 OUTPUT_FILE = DATA_DIR / "data_merged_labeled.parquet"
 
 # Thresholds empíricos (ajustables)

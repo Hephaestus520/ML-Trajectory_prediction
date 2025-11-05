@@ -21,8 +21,8 @@ from sklearn.metrics import (
     recall_score
 )
 
-from model import ActionClassifierLSTM
-from dataset import ActionSequenceDataset
+from .model import ActionClassifierLSTM
+from .dataset import ActionSequenceDataset
 
 
 def evaluate_model(model_dir, data_path=None, batch_size=64):
