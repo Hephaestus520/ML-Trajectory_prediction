@@ -14,8 +14,8 @@ from datetime import datetime
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-from model import ActionClassifierLSTM, get_model_summary
-from dataset import ActionSequenceDataset
+from .model import ActionClassifierLSTM, get_model_summary
+from .dataset import ActionSequenceDataset
 
 
 def train_epoch(model, dataloader, criterion, optimizer, device):

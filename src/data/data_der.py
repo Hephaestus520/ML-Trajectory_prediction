@@ -1,13 +1,13 @@
 """
-data_prep.py
+data_der.py 
 -------------
 Prepara el dataset ESTA (Esports Trajectories and Actions) para el modelo
 de predicción cualitativa de trayectorias en CS:GO.
 
 Pipeline:
 1. Carga los datos combinados (data_merged.parquet)
-2. Calcula variables derivadas: velocidad, cambios en altura (dz)
-3. Genera etiquetas cualitativas: move, jump, duck, idle
+2. Calcula variables derivadas: velocidad, cambios en altura (dz), aceleración
+3. Genera etiquetas cualitativas: move, jump, duck, idle, dead
 4. Guarda dataset limpio y etiquetado
 """
 
@@ -34,11 +34,11 @@ Z_DUCK_THRESH = -10   # diferencia en z para detectar agacharse
 
 def derive_features(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Calcula variables derivadas como velocidad y cambios verticales.
+    Calcula variables derivadas: desplazamientos, velocidad, aceleración y cambios verticales.
     """
     df = df.sort_values(["map", "round", "player", "tick"])
     
-    # Calcular diferencias por jugador
+    # Calcular diferencias espaciales por jugador
     df["dx"] = df.groupby(["map", "round", "player"])["x"].diff().fillna(0)
     df["dy"] = df.groupby(["map", "round", "player"])["y"].diff().fillna(0)
     df["dz"] = df.groupby(["map", "round", "player"])["z"].diff().fillna(0)
@@ -47,8 +47,18 @@ def derive_features(df: pd.DataFrame) -> pd.DataFrame:
     if "velocity" not in df.columns:
         df["velocity"] = np.sqrt(df["dx"]**2 + df["dy"]**2 + df["dz"]**2)
     
-    # Magnitud horizontal (más relevante para movimiento)
+    # Velocidad horizontal (relevante para movimiento en plano)
     df["speed"] = np.sqrt(df["dx"]**2 + df["dy"]**2)
+    
+    # -------------------------------------------------------
+    # 🧮 Aceleración (cambio de velocidad entre ticks consecutivos)
+    # -------------------------------------------------------
+    df["acceleration"] = (
+        df.groupby(["map", "round", "player"])["speed"].diff().fillna(0)
+    )
+    
+    # Suavizar posibles picos (opcional)
+    df["acceleration"] = df["acceleration"].clip(-100, 100)
     
     return df
 
@@ -68,7 +78,7 @@ def derive_action_labels(df: pd.DataFrame) -> pd.DataFrame:
     # Agacharse (descenso leve en Z y baja velocidad)
     df.loc[(df["dz"] < Z_DUCK_THRESH) & (df["speed"] < VEL_THRESH), "action_label"] = "duck"
     
-    # Opcional: morir / sin vida
+    # Morir / sin vida
     if "isAlive" in df.columns:
         df.loc[df["isAlive"] == 0, "action_label"] = "dead"
     
