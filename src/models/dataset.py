@@ -37,15 +37,24 @@ class ActionSequenceDataset(Dataset):
         target_col="action_label",
         scaler=None,
         label_encoder=None,
-        train=True
+        train=True,
+        sample_frac=None,  # Nuevo: fracción de datos a usar
+        max_sequences=None  # Nuevo: límite de secuencias
     ):
         self.sequence_length = sequence_length
         self.target_col = target_col
+        self.max_sequences = max_sequences
         
         # Cargar datos
         print(f"📥 Cargando datos desde {data_path}...")
         self.df = pd.read_parquet(data_path)
         print(f"✅ Datos cargados: {len(self.df):,} filas")
+        
+        # Aplicar muestreo si se especifica (para reducir memoria)
+        if sample_frac is not None and 0 < sample_frac < 1.0:
+            original_size = len(self.df)
+            self.df = self.df.sample(frac=sample_frac, random_state=42).reset_index(drop=True)
+            print(f"📊 Muestreo: {original_size:,} → {len(self.df):,} filas ({sample_frac*100:.1f}%)")
         
         # Features por defecto
         if feature_cols is None:
@@ -100,21 +109,43 @@ class ActionSequenceDataset(Dataset):
         """Crea secuencias temporales agrupadas por jugador y ronda."""
         # Agrupar por mapa, ronda y jugador
         grouped = self.df.groupby(['map', 'round', 'player'])
+        total_groups = len(grouped)
         
-        for name, group in grouped:
-            # Ordenar por tick
-            group = group.sort_values('tick')
+        print(f"   📦 Procesando {total_groups:,} grupos de jugadores...")
+        
+        for idx, (name, group) in enumerate(grouped):
+            # Mostrar progreso cada 1000 grupos
+            if idx % 1000 == 0 and idx > 0:
+                print(f"   ⏳ Progreso: {idx:,}/{total_groups:,} ({idx/total_groups*100:.1f}%) - Secuencias: {len(self.sequences):,}")
+            
+            # Verificar límite de secuencias
+            if self.max_sequences and len(self.sequences) >= self.max_sequences:
+                print(f"   ⚠️ Límite alcanzado: {self.max_sequences:,} secuencias")
+                break
+            
+            # Ordenar por tick y resetear índice
+            group = group.sort_values('tick').reset_index(drop=True)
             
             # Crear secuencias deslizantes
-            for i in range(len(group) - self.sequence_length):
-                # Secuencia de features
-                sequence = group[self.feature_cols].iloc[i:i + self.sequence_length].values
+            num_sequences = len(group) - self.sequence_length
+            if num_sequences <= 0:
+                continue
+            
+            for i in range(num_sequences):
+                # Verificar límite interno
+                if self.max_sequences and len(self.sequences) >= self.max_sequences:
+                    break
                 
-                # Label (acción en el siguiente timestep)
-                label = group[self.target_col + '_encoded'].iloc[i + self.sequence_length]
-                
-                self.sequences.append(sequence)
-                self.labels.append(label)
+                try:
+                    # Usar .values directamente (más rápido que .iloc)
+                    sequence = group[self.feature_cols].values[i:i + self.sequence_length]
+                    label = group[self.target_col + '_encoded'].values[i + self.sequence_length]
+                    
+                    self.sequences.append(sequence)
+                    self.labels.append(label)
+                except (IndexError, KeyError):
+                    # Saltar secuencias problemáticas
+                    continue
     
     def __len__(self):
         return len(self.sequences)

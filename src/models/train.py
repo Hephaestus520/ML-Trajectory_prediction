@@ -133,7 +133,6 @@ def train_model(
     output_dir="outputs",
     use_class_weights=True
 ):
-    print("debug1")
     """
     Entrena el modelo LSTM.
     
@@ -155,12 +154,11 @@ def train_model(
     # Crear directorio de salida
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    print("debug2")
+    
     # Timestamp para identificar el entrenamiento
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     run_dir = output_dir / f"run_{timestamp}"
     run_dir.mkdir(exist_ok=True)
-    print("debug3")
     print("=" * 70)
     print(f"🚀 ENTRENAMIENTO DEL MODELO LSTM")
     print("=" * 70)
@@ -175,7 +173,9 @@ def train_model(
     full_dataset = ActionSequenceDataset(
         data_path=data_path,
         sequence_length=sequence_length,
-        train=True
+        train=True,
+        sample_frac=0.20,  # Usar 20% de los datos (6.8M filas)
+        max_sequences=1000000  # Máximo 1M de secuencias
     )
     
     # Guardar preprocessors
@@ -355,14 +355,14 @@ def train_model(
 
 
 if __name__ == "__main__":
-    # Entrenar modelo con configuración por defecto
+    # Entrenar modelo con configuración OPTIMIZADA para 1 hora
     model, history, run_dir = train_model(
         sequence_length=10,
         hidden_size=128,
         num_layers=2,
-        dropout=0.2,
-        batch_size=64,
-        num_epochs=50,
+        dropout=0.3,
+        batch_size=256,  # Batch más grande = más rápido
+        num_epochs=20,   # Menos épocas pero con más datos
         learning_rate=0.001,
         use_class_weights=True
     )
