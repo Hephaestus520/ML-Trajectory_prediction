@@ -1,523 +1,279 @@
-# 🎮 CS:GO Player Action Prediction# 🎮 CS:GO Player Action Prediction# 🎮 ML-Trajectory_prediction
+<div align="center">
 
+# CS:GO Player Action Predictor
 
+Deep learning system that predicts player actions in Counter-Strike: Global Offensive using LSTM neural networks. Trained on 680 professional match demos from the ESTA dataset, the model classifies player movements into five distinct action categories with 87.9% accuracy.
 
-Predicción de acciones de jugadores en CS:GO usando LSTM (Long Short-Term Memory).
+<br/>
 
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white) ![PyTorch](https://img.shields.io/badge/PyTorch-2.9-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white) ![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white) ![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white) ![scikit--learn](https://img.shields.io/badge/scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
 
+</div>
 
-## 📊 DatasetPredicción de acciones de jugadores en CS:GO usando LSTM (Long Short-Term Memory).Predicción categórica de la próxima acción de jugadores en CS:GO usando LSTM.
+---
 
+## Overview
 
+This machine learning project implements a bidirectional LSTM classifier that analyzes player trajectories in CS:GO professional matches and predicts their next action. The model processes sequences of 10 timesteps, each containing 13 features related to position, movement, health, and view direction to classify actions into five categories: move, jump, duck, idle, or dead.
 
-**ESTA (Esports Trajectories and Actions)**
+The system achieves 87.9% overall accuracy with particularly strong performance on the "dead" (97.1% F1) and "move" (87.4% F1) classes. The project includes a complete pipeline for data extraction, preprocessing, training, evaluation, and interactive prediction.
 
-- 680 archivos `.json.xz` en `data/raw/lan/`
+## Quick Start
 
-- Datos de partidas profesionales de CS:GO## 📊 Dataset![Python](https://img.shields.io/badge/Python-3.11-blue)
+### Prerequisites
 
-- Contiene trayectorias y acciones de jugadores
+- Python 3.11+
+- 8GB+ RAM (for full dataset)
+- 2GB+ disk space
 
-![PyTorch](https://img.shields.io/badge/PyTorch-2.9-red)
+### Installation
 
-## 🎯 Objetivo
+```bash
+# Clone repository
+git clone https://github.com/Hephaestus520/ML-Trajectory_prediction.git
+cd ML-Trajectory_prediction
 
-**ESTA (Esports Trajectories and Actions)**
-
-Predecir la próxima acción de un jugador basándose en su historial de movimientos.
-
-- 680 archivos `.json.xz` en `data/raw/lan/`---
-
-**Clases:** `move`, `jump`, `duck`, `idle`, `dead`
-
-- Datos de partidas profesionales de CS:GO
-
-## 🏗️ Arquitectura
-
-- Contiene trayectorias y acciones de jugadores## 📋 Descripción
-
-**LSTM Classifier:** 2 capas, 128 unidades, dropout 0.3  
-
-**Input:** Secuencias de 10 timesteps con 14 features  
-
-**Output:** 5 clases  
-
-**Parámetros:** 214,661## 🎯 ObjetivoModelo LSTM que predice la próxima acción de un jugador en CS:GO basándose en secuencias temporales.
-
-
-
-## 📁 Estructura
-
-
-
-```Predecir la próxima acción de un jugador basándose en su historial de movimientos.**Clases predichas:** 🏃 move | ⬆️ jump | ⬇️ duck | 🛑 idle | ☠️ dead
-
-ML-Trajectory_prediction/
-
-├── data/
-
-│   ├── raw/lan/           # 680 archivos .json.xz
-
-│   └── processed/         # Parquet procesados**Clases:** `move`, `jump`, `duck`, `idle`, `dead`---
-
-├── src/
-
-│   ├── data/              # 📂 Procesamiento de datos
-
-│   │   ├── data_prep.py
-
-│   │   ├── merge_batches.py## 🏗️ Arquitectura## ⚡ Quick Start
-
-│   │   ├── data_der.py
-
-│   │   └── validation.py
-
-│   └── models/            # 📂 Modelo LSTM
-
-│       ├── model.py**LSTM Classifier:** 2 capas, 128 unidades, dropout 0.3  ```powershell
-
-│       ├── dataset.py
-
-│       ├── train.py**Input:** Secuencias de 10 timesteps con 14 features  # 1. Clonar y configurar
-
-│       └── evaluate.py
-
-├── outputs/               # Modelos entrenados**Output:** 5 clases  git clone https://github.com/Hephaestus520/ML-Trajectory_prediction.git
-
-└── main.py                # Menu interactivo
-
-```**Parámetros:** 214,661cd ML-Trajectory_prediction
-
-
-
-## 🚀 Instalación
-
-
-
-```bash## 📁 Estructura# 2. Entorno virtual e instalación
-
+# Create virtual environment
 python -m venv venv
+.\venv\Scripts\Activate.ps1  # Windows
+# source venv/bin/activate    # Linux/Mac
 
-venv\Scripts\activatepython -m venv venv
-
+# Install dependencies
 pip install -r requirements.txt
+```
 
-``````.\venv\Scripts\Activate.ps1
+### Usage
 
-
-
-## 📖 Uso RápidoML-Trajectory_prediction/pip install -r requirements.txt
-
-
-
-### Menu Interactivo├── data/
-
-
-
-```bash│   ├── raw/lan/           # 680 archivos .json.xz# 3. Colocar datos en data/raw/lan/
-
+**Interactive Menu**:
+```bash
 python main.py
-
-```│   └── processed/         # Parquet procesados
-
-
-
-### Pipeline Manual├── src/# 4. Ejecutar menú interactivo
-
-
-
-```bash│   ├── data/              # 📂 Procesamiento de datospython main.py
-
-# 1. Procesar datos (30-45 min)
-
-python src/data/data_prep.py│   │   ├── preprocessing.py```
-
-python src/data/merge_batches.py
-
-python src/data/data_der.py│   │   ├── merge_batches.py
-
-
-
-# 2. Entrenar modelo (1-3 horas)│   │   ├── feature_engineering.py---
-
-python src/models/train.py
-
-│   │   └── validation.py
-
-# 3. Evaluar
-
-python src/models/evaluate.py│   └── models/            # 📂 Modelo LSTM## 📁 Estructura
-
 ```
 
-│       ├── model.py
+Options:
+1. Process raw data
+2. Merge batch files
+3. Generate features and labels
+4. Train LSTM model
+5. Evaluate model
+6. Make predictions
 
-## 📂 Módulo: Procesamiento de Datos
-
-│       ├── dataset.py```
-
-### `data_prep.py`
-
-Extrae datos de archivos `.json.xz` y genera batches Parquet.│       ├── train.pyML-Trajectory_prediction/
-
-
-
-**Uso:**│       └── evaluate.py├── data/
-
+**Quick Training** (uses 20% of data, ~45 minutes):
 ```bash
-
-python src/data/data_prep.py├── outputs/               # Modelos entrenados│   ├── raw/lan/              # Datos .json.xz (ESTA dataset)
-
+python scripts/train_quick.py
 ```
 
-└── main.py                # Menu interactivo│   └── processed/            # Datos .parquet procesados
-
-**Salida:** `data/processed/batch_*.parquet`
-
-```├── src/
-
-### `merge_batches.py`
-
-Combina todos los batches en un solo archivo.│   ├── model.py              # Arquitectura LSTM ✅
-
-
-
-**Uso:**## 🚀 Instalación│   ├── dataset.py            # PyTorch Dataset ✅
-
+**Data Validation**:
 ```bash
-
-python src/data/merge_batches.py│   ├── train.py              # Entrenamiento ✅
-
+python src/data/validation.py
 ```
 
-```bash│   ├── evaluate.py           # Evaluación ✅
-
-**Salida:** `data_merged.parquet`
-
-python -m venv venv│   ├── data_prep.py          # Procesamiento ✅
-
-### `data_der.py`
-
-Genera features derivadas y labels categóricas.venv\Scripts\activate│   ├── merge_batches.py      # Combinar ✅
-
-
-
-**Features:** `dx`, `dy`, `dz`, `speed`, `acceleration`  pip install -r requirements.txt│   └── data_der.py           # Features ✅
-
-**Labels:** `move`, `jump`, `duck`, `idle`, `dead`
-
-```├── outputs/                  # Modelos entrenados
-
-**Uso:**
-
-```bash├── main.py                   # Menú principal ✅
-
-python src/data/data_der.py
-
-```## 📖 Uso Rápido├── GUIA_MODELO.md           # Guía completa del modelo
-
-
-
-**Salida:** `data_merged_labeled.parquet`└── requirements.txt
-
-
-
-### `validation.py`### Menu Interactivo```
-
-Valida estructura y calidad de los datos.
-
-
-
-## 📂 Módulo: Modelo LSTM
-
-```bash---
-
-### `model.py`
-
-Define la arquitectura LSTM.python main.py
-
-
-
-**Componentes:**```## 🚀 Uso Rápido
-
-- 2 capas LSTM (128 hidden units)
-
-- BatchNorm1d
-
-- Dropout (0.3)
-
-- 2 capas FC### Pipeline Manual```powershell
-
-
-
-**Métodos:**# Activar entorno
-
-- `forward()`: Propagación directa
-
-- `predict()`: Predicción con probabilidades```bash.\venv\Scripts\Activate.ps1
-
-- `predict_class()`: Predicción de clase
-
-# 1. Procesar datos (30-45 min)
-
-### `dataset.py`
-
-PyTorch Dataset con secuencias temporales.python src/data/preprocessing.py# Menú interactivo (RECOMENDADO)
-
-
-
-**Features:**python src/data/merge_batches.pypython main.py
-
-- Ventanas deslizantes de 10 timesteps
-
-- StandardScaler para normalizaciónpython src/data/feature_engineering.py
-
-- LabelEncoder para clases
-
-- Manejo de clases desbalanceadas# O scripts individuales:
-
-
-
-**Métodos:**# 2. Entrenar modelo (1-3 horas)python src/data_prep.py      # Procesar datos
-
-- `get_class_weights()`: Pesos para weighted loss
-
-- `save_preprocessors()`: Guardar scalerspython src/models/train.pypython src/train.py          # Entrenar modelo
-
-
-
-### `train.py`python src/evaluate.py       # Evaluar modelo
-
-Pipeline completo de entrenamiento.
-
-# 3. Evaluar```
-
-**Configuración:**
-
-```pythonpython src/models/evaluate.py
-
-sequence_length = 10
-
-batch_size = 64```Ver **[GUIA_MODELO.md](GUIA_MODELO.md)** para instrucciones completas.
-
-hidden_size = 128
-
-num_layers = 2
-
-dropout = 0.3
-
-learning_rate = 0.001## 📂 Módulo: Procesamiento de Datos---
-
-num_epochs = 50
+## Project Structure
 
 ```
-
-
-
-**Features:**### `preprocessing.py`## 🏗️ Modelo LSTM
-
-- ✅ Weighted loss para clases desbalanceadas
-
-- ✅ Train/Val/Test split (70/15/15)Extrae datos de archivos `.json.xz` y genera batches Parquet.
-
-- ✅ Learning rate scheduling
-
-- ✅ Checkpointing automático- **Input:** (batch, 10, 14) - 10 timesteps, 14 features
-
-- ✅ Visualización de métricas
-
-**Uso:**- **Arquitectura:** 2 capas LSTM + FC layers
-
-**Uso:**
-
-```bash```bash- **Output:** (batch, 5) - 5 clases
-
-python src/models/train.py
-
-```python src/data/preprocessing.py- **Parámetros:** 214,661 entrenables
-
-
-
-**Salidas:**```
-
-- `outputs/run_TIMESTAMP/best_model.pt`
-
-- `outputs/run_TIMESTAMP/config.json`**Features:** posición (x,y,z), velocidad, HP, armadura, vista, derivadas
-
-- `outputs/run_TIMESTAMP/training_history.png`
-
-**Salida:** `data/processed/batch_*.parquet`
-
-### `evaluate.py`
-
-Evaluación del modelo con métricas detalladas.---
-
-
-
-**Métricas:**### `merge_batches.py`
-
-- Accuracy, Precision, Recall, F1-Score
-
-- Confusion MatrixCombina todos los batches en un solo archivo.## 📊 Dataset
-
-- Probability Distributions
-
-
-
-**Uso:**
-
-```bash**Uso:**- **Fuente:** ESTA (Esports Trajectories and Actions)
-
-python src/models/evaluate.py
-
-``````bash- **680 archivos** .json.xz procesados
-
-
-
-**Salidas:**python src/data/merge_batches.py- **Secuencias:** Ventanas de 10 timesteps
-
-- `confusion_matrix.png`
-
-- `probability_distributions.png````- **Split:** 70% train / 15% val / 15% test
-
-- `evaluation_results.json`
-
-
-
-## 🛠️ Requisitos
-
-**Salida:** `data_merged.parquet`---
-
-- Python 3.11+
-
-- PyTorch 2.9.0
-
-- pandas, numpy, scikit-learn
-
-- matplotlib, awpy### `feature_engineering.py`## 🎯 Resultados
-
-
-
-## 🤝 CréditosGenera features derivadas y labels categóricas.
-
-
-
-Universidad EAFIT - Machine Learning  - Accuracy: ~75-80%
-
-Dataset: ESTA (Esports Trajectories and Actions)
-
-**Features:** `dx`, `dy`, `dz`, `speed`, `acceleration`  - F1-Score: ~75-80%
-
-**Labels:** `move`, `jump`, `duck`, `idle`, `dead`- Tiempo: 1-3 horas (CPU)
-
-
-
-**Uso:**---
-
-```bash
-
-python src/data/feature_engineering.py## 📚 Documentación
-
+ML-Trajectory_prediction/
+├── config/
+│   └── .env.example           # Configuration template
+├── data/
+│   ├── raw/lan/               # Original ESTA dataset (680 .json.xz files)
+│   └── processed/             # Preprocessed parquet files
+├── docs/
+│   ├── ARCHITECTURE.md        # Technical architecture details
+│   ├── PRESENTATION.md        # Project presentation slides
+│   └── RESULTS.md             # Evaluation results and metrics
+├── outputs/
+│   └── run_*/                 # Training runs with models and logs
+├── scripts/
+│   ├── train_quick.py         # Fast training script
+│   ├── debug_data.py          # Data inspection utility
+│   └── test_simple.py         # Simple test script
+├── src/
+│   ├── data/                  # Data processing pipeline
+│   │   ├── data_prep.py       # Extract player data from demos
+│   │   ├── merge_batches.py   # Combine batch files
+│   │   ├── data_der.py        # Feature engineering
+│   │   └── validation.py      # Data quality checks
+│   └── models/                # ML model components
+│       ├── model.py           # LSTM architecture
+│       ├── dataset.py         # PyTorch Dataset class
+│       ├── train.py           # Training pipeline
+│       ├── evaluate.py        # Model evaluation
+│       └── predict.py         # Inference utilities
+├── main.py                    # Interactive CLI menu
+├── requirements.txt           # Python dependencies
+└── LICENSE                    # MIT License
 ```
 
-- **[GUIA_USO.md](GUIA_USO.md)** - Procesamiento de datos
+## Model Architecture
 
-**Salida:** `data_merged_labeled.parquet`- **[GUIA_MODELO.md](GUIA_MODELO.md)** - Modelo y entrenamiento
+### LSTM Specifications
+- **Type**: Bidirectional LSTM with fully connected layers
+- **Layers**: 2 LSTM layers (128 units each) + 2 FC layers
+- **Regularization**: Dropout (0.3), BatchNorm1d
+- **Total Parameters**: 214,661
+- **Input**: Sequences of 10 timesteps × 13 features
+- **Output**: 5 action classes
 
+### Features (13 total)
 
+| Category | Features | Description |
+|----------|----------|-------------|
+| Position | x, y, z | 3D coordinates in game space |
+| Movement | velocity, dx, dy, dz, speed, acceleration | Motion-related metrics |
+| Player State | hp, armor | Health and armor points |
+| View Direction | viewX, viewY | Camera orientation angles |
 
-### `validation.py`---
+### Action Classes (5 total)
 
-Valida estructura y calidad de los datos.
+- **move**: Player walking or running
+- **jump**: Player jumping
+- **duck**: Player crouching
+- **idle**: Player standing still
+- **dead**: Player eliminated
 
-**Estado:** ✅ Funcional | **Última actualización:** Nov 2025
+## Results
 
-## 📂 Módulo: Modelo LSTM
+Evaluated on 32,989 test sequences from professional matches:
 
-### `model.py`
-Define la arquitectura LSTM.
+| Metric | Score |
+|--------|-------|
+| Overall Accuracy | 87.90% |
+| Weighted Precision | 90.04% |
+| Weighted Recall | 87.90% |
+| Weighted F1-Score | 88.36% |
 
-**Componentes:**
-- 2 capas LSTM (128 hidden units)
-- BatchNorm1d
-- Dropout (0.3)
-- 2 capas FC
+### Per-Class Performance
 
-**Métodos:**
-- `forward()`: Propagación directa
-- `predict()`: Predicción con probabilidades
-- `predict_class()`: Predicción de clase
+| Class | Precision | Recall | F1-Score | Support |
+|-------|-----------|--------|----------|---------|
+| dead  | 97.06% | 97.77% | 97.41% | 9,222 |
+| duck  | 22.50% | 94.74% | 36.36% | 19 |
+| idle  | 55.78% | 94.73% | 70.21% | 2,145 |
+| jump  | 79.46% | 87.70% | 83.37% | 5,535 |
+| move  | 94.30% | 81.39% | 87.37% | 16,068 |
 
-### `dataset.py`
-PyTorch Dataset con secuencias temporales.
+See [docs/RESULTS.md](docs/RESULTS.md) for detailed evaluation metrics and visualizations.
 
-**Features:**
-- Ventanas deslizantes de 10 timesteps
-- StandardScaler para normalización
-- LabelEncoder para clases
-- Manejo de clases desbalanceadas
+## Configuration
 
-**Métodos:**
-- `get_class_weights()`: Pesos para weighted loss
-- `save_preprocessors()`: Guardar scalers
+Edit `config/.env.example` and save as `config/.env`:
 
-### `train.py`
-Pipeline completo de entrenamiento.
+```env
+# Model hyperparameters
+SEQUENCE_LENGTH=10
+HIDDEN_SIZE=128
+NUM_LAYERS=2
+DROPOUT=0.3
 
-**Configuración:**
-```python
-sequence_length = 10
-batch_size = 64
-hidden_size = 128
-num_layers = 2
-dropout = 0.3
-learning_rate = 0.001
-num_epochs = 50
+# Training configuration
+BATCH_SIZE=256
+NUM_EPOCHS=20
+LEARNING_RATE=0.001
+
+# Memory optimization
+SAMPLE_FRACTION=0.2        # Use 20% of dataset
+MAX_SEQUENCES=1000000      # Cap at 1M sequences
 ```
 
-**Features:**
-- ✅ Weighted loss para clases desbalanceadas
-- ✅ Train/Val/Test split (70/15/15)
-- ✅ Learning rate scheduling
-- ✅ Checkpointing automático
-- ✅ Visualización de métricas
+## Dataset
 
-**Uso:**
+**ESTA (Esports Trajectories and Actions)**
+- Source: Professional CS:GO match demos
+- Format: 680 compressed JSON files (`.json.xz`)
+- Size: ~12.8 GB processed
+- Total observations: 34+ million player states
+
+## Training
+
+### Full Training
 ```bash
 python src/models/train.py
 ```
 
-**Salidas:**
-- `outputs/run_TIMESTAMP/best_model.pt`
-- `outputs/run_TIMESTAMP/config.json`
-- `outputs/run_TIMESTAMP/training_history.png`
-
-### `evaluate.py`
-Evaluación del modelo con métricas detalladas.
-
-**Métricas:**
-- Accuracy, Precision, Recall, F1-Score
-- Confusion Matrix
-- Probability Distributions
-
-**Uso:**
+### Quick Training (Optimized)
 ```bash
+python scripts/train_quick.py
+```
+- Uses 20% of dataset (~6.8M observations)
+- Limits to 1M sequences
+- Completes in ~45 minutes
+- Achieves 85-90% validation accuracy
+
+Training outputs saved to `outputs/run_<timestamp>/`:
+- `best_model.pt` - Model checkpoint
+- `config.json` - Hyperparameters
+- `training_history.png` - Loss/accuracy plots
+- `scaler.pkl`, `label_encoder.pkl` - Preprocessing objects
+
+## Evaluation
+
+```bash
+python main.py  # Select option 5
+# or
 python src/models/evaluate.py
 ```
 
-**Salidas:**
-- `confusion_matrix.png`
-- `probability_distributions.png`
-- `evaluation_results.json`
+Generates:
+- Confusion matrix visualization
+- Per-class probability distributions
+- Detailed metrics report (JSON)
 
-## 🛠️ Requisitos
+## Technical Details
 
-- Python 3.11+
-- PyTorch 2.9.0
-- pandas, numpy, scikit-learn
-- matplotlib, awpy
+- **Framework**: PyTorch 2.9
+- **Optimizer**: Adam
+- **Loss**: CrossEntropyLoss with class weights
+- **Scheduler**: ReduceLROnPlateau
+- **Data Split**: 70% train / 15% val / 15% test
+- **Normalization**: StandardScaler
+- **Sequence Strategy**: Sliding window with 10-step lookback
 
-## 🤝 Créditos
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for complete technical documentation.
 
-Universidad EAFIT - Machine Learning  
-Dataset: ESTA (Esports Trajectories and Actions)
+## Troubleshooting
+
+**Out of Memory Error**:
+- Reduce `SAMPLE_FRACTION` in config (try 0.1)
+- Lower `MAX_SEQUENCES` to 500,000
+- Decrease `BATCH_SIZE` to 128
+
+**Slow Training**:
+- Increase `BATCH_SIZE` to 512
+- Reduce `NUM_EPOCHS`
+- Close other applications
+
+**Low Accuracy**:
+- Increase `SAMPLE_FRACTION` to use more data
+- Train for more epochs
+- Check class distribution in output logs
+
+## Contributing
+
+Contributions are welcome! Areas for improvement:
+- Attention mechanisms for sequence modeling
+- Real-time prediction API
+- Additional game-specific features
+- Model compression for deployment
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- **awpy Library**: CS:GO demo parsing functionality
+- **PyTorch Team**: Deep learning framework
+- **ESTA Dataset**: Esports trajectory data providers
+
+## Authors
+
+**Sebastian Salazar** & **Miguel Ángel Escudero**
+- EAFIT University - Machine Learning Course Project
+- November 2025
+
+---
+
+<div align="center">
+
+**[View Documentation](docs/ARCHITECTURE.md) • [See Results](docs/RESULTS.md) • [Report Issue](https://github.com/Hephaestus520/ML-Trajectory_prediction/issues)**
+
+</div>
