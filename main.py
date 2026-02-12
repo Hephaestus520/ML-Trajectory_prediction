@@ -232,7 +232,7 @@ def train_model_menu():
         sequence_length=sequence_length,
         hidden_size=hidden_size,
         num_layers=num_layers,
-        dropout=0.2,
+        dropout=0.3,
         batch_size=batch_size,
         num_epochs=num_epochs,
         learning_rate=learning_rate,
