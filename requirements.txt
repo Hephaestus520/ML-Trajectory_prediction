@@ -1,8 +1,21 @@
-numpy 
-pandas 
-scikit-learn 
-torch 
-matplotlib 
-jupyter 
-tqdm
-awpy
+# Core ML Libraries
+torch==2.5.1
+numpy==1.26.4
+pandas==2.2.3
+
+# Preprocessing & Feature Engineering
+scikit-learn==1.5.2
+
+# CS:GO Demo Parsing
+awpy==1.6.9
+
+# Visualization
+matplotlib==3.9.2
+seaborn==0.13.2
+
+# Progress Bars & Utilities
+tqdm==4.67.1
+
+# Jupyter Notebook (optional)
+jupyter==1.1.1
+ipykernel==6.29.5
